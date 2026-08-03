@@ -31,6 +31,107 @@ class AeroHelperApp extends StatelessWidget {
   }
 }
 
+// --- SCREEN 4: Mreža (Društvo) ---
+class CommunityScreen extends StatefulWidget {
+  const CommunityScreen({super.key});
+
+  @override
+  State<CommunityScreen> createState() => _CommunityScreenState();
+}
+
+class _CommunityScreenState extends State<CommunityScreen> {
+  final TextEditingController _postController = TextEditingController();
+  final List<String> _posts = [
+    'Završio sam novi model jedrilice danas! Težište je savršeno na 32%.',
+    'Može li neko da preporuči dobar ESC za 2212 motor?',
+    'Zdravo svima! Novi sam u hobiju, upravo pravim svoj prvi Flite Test avion.'
+  ];
+
+  void _addPost() {
+    final text = _postController.text.trim();
+    if (text.isNotEmpty) {
+      setState(() {
+        _posts.insert(0, text);
+        _postController.clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mreža Modelara')),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _postController,
+                        decoration: const InputDecoration(
+                          labelText: 'Podelite savet, pitanje ili projekat...',
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: (_) => _addPost(),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    FloatingActionButton(
+                      onPressed: _addPost,
+                      elevation: 0,
+                      child: const Icon(Icons.send),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _posts.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const CircleAvatar(
+                              child: Icon(Icons.person),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Korisnik',
+                                    style: Theme.of(context).textTheme.titleSmall,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(_posts[index]),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
@@ -45,6 +146,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const OhmsLawScreen(),
     const CGCalculatorScreen(),
     const InventoryScreen(),
+    const CommunityScreen(),
   ];
 
   @override
@@ -80,6 +182,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       selectedIcon: Icon(Icons.list_alt),
                       label: Text('Moji delovi'),
                     ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.people_outline),
+                      selectedIcon: Icon(Icons.people),
+                      label: Text('Mreža'),
+                    ),
                   ],
                 ),
                 const VerticalDivider(thickness: 1, width: 1),
@@ -111,6 +218,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: Icon(Icons.list_alt_outlined),
                   selectedIcon: Icon(Icons.list_alt),
                   label: 'Delovi',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.people_outline),
+                  selectedIcon: Icon(Icons.people),
+                  label: 'Mreža',
                 ),
               ],
             ),
